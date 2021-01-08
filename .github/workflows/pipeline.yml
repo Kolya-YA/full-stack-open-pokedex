@@ -33,3 +33,6 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: 'fso2020-poket'
           heroku_email: 'kolya.ya@gmail.com'
+          healthcheck: "https://fso2020-poket.herokuapp.com/version"
+          checkstring: "4"
+          delay: 5
