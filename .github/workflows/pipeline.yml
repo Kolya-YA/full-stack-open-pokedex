@@ -36,3 +36,4 @@ jobs:
           healthcheck: "https://fso2020-poket.herokuapp.com/version"
           checkstring: "4"
           delay: 5
+          rollbackonhealthcheckfailed: true
