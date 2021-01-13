@@ -38,7 +38,7 @@ jobs:
           wait-on: 'http://localhost:5000'
 
       - name: Name of event
-        run: echo ${{ github.event.name }}
+        run: echo "Event name is ${{ github.event.name }}"
 
       - name: Deploy to Heroku
         if: github.event.name == 'push'
