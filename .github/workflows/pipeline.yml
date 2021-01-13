@@ -37,8 +37,10 @@ jobs:
           start: npm run start-prod
           wait-on: 'http://localhost:5000'
 
-      - name: Deploy to Heroku
+      - name: Name of event
         run: echo ${{ github.event.name }}
+
+      - name: Deploy to Heroku
         if: github.event.name == 'push'
         uses: akhileshns/heroku-deploy@v3.8.9
         with:
