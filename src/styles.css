@@ -20,6 +20,9 @@ body {
 
 body > div {
   flex: 1 0 auto;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 footer {
