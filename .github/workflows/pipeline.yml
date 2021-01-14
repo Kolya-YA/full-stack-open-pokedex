@@ -1,4 +1,4 @@
-name: Test_&_deployment_pipeline
+name: Test_&_Deployment pipeline
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  lint_test_deployment_pipeline:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2          
@@ -61,3 +61,32 @@ jobs:
           rollbackonhealthcheckfailed: true
         env:
           SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+
+      - name: Slack failure notifications
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
+
+      - name: Slack success notifications
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: commit,author,took
+          custom_payload: |
+            {
+              username: 'FSO 2020 Github actions',
+              icon_emoji: ':hurtrealbad:',
+              attachments: [{
+                color: 'good',
+                text: `A new version deployed to https://fso2020-poket.herokuapp.com.\nCommit: ${process.env.AS_COMMIT} by ${process.env.AS_AUTHOR}.\nBuild took ${process.env.AS_TOOK}.`
+              }]
+            }
+
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+        if: success() && github.event_name == 'push' && env.SKIP_VER
