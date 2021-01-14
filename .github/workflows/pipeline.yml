@@ -15,17 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: commit messages
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-          IS_CONTAIN: ${{ contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
-        run: |
-          echo "All: $COMMIT_MESSAGES"
-          echo "Contains Skip ver - ${IS_CONTAIN}"
-
 
       - name: Bamp version and add tag
-        if: github.event_name == 'push'
+        env:
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+        if: github.event_name == 'push' && env.SKIP_VER
         uses: anothrNick/github-tag-action@1.34.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
