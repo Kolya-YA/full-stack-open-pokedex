@@ -13,9 +13,7 @@ jobs:
   simple_deployment_pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        env:
-          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+      - uses: actions/checkout@v2          
 
       - uses: actions/setup-node@v2
         with:
@@ -23,7 +21,6 @@ jobs:
 
       # - name: npm install
       #   run: npm install
-
 
       # - name: Lint
       #   run: npm run eslint
@@ -45,6 +42,7 @@ jobs:
         if: github.event_name == 'push' && env.SKIP_VER
         uses: anothrNick/github-tag-action@1.34.0
         env:
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           TAG_CONTEXT: branch
