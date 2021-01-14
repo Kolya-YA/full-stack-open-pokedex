@@ -20,7 +20,7 @@ jobs:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
           IS_CONTAIN: ${{ join(github.event.commits.*.message, ', '), '#skip_ver') }}
         run: |
-          echo "$COMMIT_MESSAGES"
+          echo "All: $COMMIT_MESSAGES"
           echo "Contains Skip ver - ${IS_CONTAIN}"
 
 
