@@ -14,40 +14,60 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '12'
+      - name: gihub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
-      - name: npm install
-        run: npm install
+      - name: commits
+        env:
+          COMMITS: ${{ toJson(github.event.commits) }}
+        run: echo "$COMMITS"
+        
+      - name: commit messages
+        env:
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: echo "$COMMIT_MESSAGES"
 
-      - name: Lint
-        run: npm run eslint
+      # - name: Bamp version and add tag
+      #   uses: anothrNick/github-tag-action@1.34.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build
-        run: npm run build
+      # - uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '12'
 
-      - name: Test
-        run: npm run test
+      # - name: npm install
+      #   run: npm install
 
-      - name: E2E tests
-        uses: cypress-io/github-action@v2
-        with:
-          command: npm run test:e2e
-          start: npm run start-prod
-          wait-on: 'http://localhost:5000'
+      # - name: Lint
+      #   run: npm run eslint
 
-      - name: Name of event
-        run: echo "Event name is ${{ github.event_name }}"
+      # - name: Build
+      #   run: npm run build
 
-      - name: Deploy to Heroku
-        if: github.event_name == 'push'
-        uses: akhileshns/heroku-deploy@v3.8.9
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: 'fso2020-poket'
-          heroku_email: 'kolya.ya@gmail.com'
-          healthcheck: "https://fso2020-poket.herokuapp.com/version"
-          checkstring: "5"
-          delay: 5
-          rollbackonhealthcheckfailed: true
+      # - name: Test
+      #   run: npm run test
+
+      # - name: E2E tests
+      #   uses: cypress-io/github-action@v2
+      #   with:
+      #     command: npm run test:e2e
+      #     start: npm run start-prod
+      #     wait-on: 'http://localhost:5000'
+
+      # - name: Name of event
+      #   run: echo "Event name is ${{ github.event_name }}"
+
+      # - name: Deploy to Heroku
+      #   if: github.event_name == 'push'
+      #   uses: akhileshns/heroku-deploy@v3.8.9
+      #   with:
+      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+      #     heroku_app_name: 'fso2020-poket'
+      #     heroku_email: 'kolya.ya@gmail.com'
+      #     healthcheck: "https://fso2020-poket.herokuapp.com/version"
+      #     checkstring: "5"
+      #     delay: 5
+      #     rollbackonhealthcheckfailed: true
