@@ -28,7 +28,10 @@ jobs:
       - name: commit messages
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
+          ALL_MSG: join(github.event.commits.*.message, ', ')
+          IS_CONTAIN: contains($ALL_MSG, '#skip_ver')
+        run: echo "$COMMIT_MESSAGES --- $ALL_MSG"
+        run: echo "$IS_CONTAIN"
 
       - name: Bamp version and add tag
         if: github.event_name == 'push'
