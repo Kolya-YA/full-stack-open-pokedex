@@ -17,20 +17,13 @@ jobs:
         env:
           SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
 
-      - name: Bamp version and add tag
-        if: github.event_name == 'push' && env.SKIP_VER
-        uses: anothrNick/github-tag-action@1.34.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          TAG_CONTEXT: branch
-
-      # - uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '12'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
 
       # - name: npm install
       #   run: npm install
+
 
       # - name: Lint
       #   run: npm run eslint
@@ -47,6 +40,14 @@ jobs:
       #     command: npm run test:e2e
       #     start: npm run start-prod
       #     wait-on: 'http://localhost:5000'
+
+      - name: Bamp version and add tag
+        if: github.event_name == 'push' && env.SKIP_VER
+        uses: anothrNick/github-tag-action@1.34.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          TAG_CONTEXT: branch
 
       # - name: Name of event
       #   run: echo "Event name is ${{ github.event_name }}"
