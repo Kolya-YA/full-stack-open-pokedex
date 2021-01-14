@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - master
-      - slack-notification
   pull_request:
     branches: [master]
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  lint_test_deployment_pipeline:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2          
@@ -25,43 +24,43 @@ jobs:
       - name: Lint
         run: npm run eslint
 
-      # - name: Build
-      #   run: npm run build
+      - name: Build
+        run: npm run build
 
-      # - name: Test
-      #   run: npm run test
+      - name: Test
+        run: npm run test
 
-      # - name: E2E tests
-      #   uses: cypress-io/github-action@v2
-      #   with:
-      #     command: npm run test:e2e
-      #     start: npm run start-prod
-      #     wait-on: 'http://localhost:5000'
+      - name: E2E tests
+        uses: cypress-io/github-action@v2
+        with:
+          command: npm run test:e2e
+          start: npm run start-prod
+          wait-on: 'http://localhost:5000'
 
-      # - name: Bamp version and add tag
-      #   if: github.event_name == 'push' && env.SKIP_VER
-      #   uses: anothrNick/github-tag-action@1.34.0
-      #   env:
-      #     SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     WITH_V: true
+      - name: Bamp version and add tag
+        if: github.event_name == 'push' && env.SKIP_VER
+        uses: anothrNick/github-tag-action@1.34.0
+        env:
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
 
-      # - name: Name of event
-      #   run: echo "Event name is ${{ github.event_name }}"
+      - name: Name of event
+        run: echo "Event name is ${{ github.event_name }}"
 
-      # - name: Deploy to Heroku
-      #   if: github.event_name == 'push' && env.SKIP_VER
-      #   uses: akhileshns/heroku-deploy@v3.8.9
-      #   with:
-      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-      #     heroku_app_name: 'fso2020-poket'
-      #     heroku_email: 'kolya.ya@gmail.com'
-      #     healthcheck: "https://fso2020-poket.herokuapp.com/version"
-      #     checkstring: "5"
-      #     delay: 5
-      #     rollbackonhealthcheckfailed: true
-      #   env:
-      #     SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+      - name: Deploy to Heroku
+        if: github.event_name == 'push' && env.SKIP_VER
+        uses: akhileshns/heroku-deploy@v3.8.9
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'fso2020-poket'
+          heroku_email: 'kolya.ya@gmail.com'
+          healthcheck: "https://fso2020-poket.herokuapp.com/version"
+          checkstring: "5"
+          delay: 5
+          rollbackonhealthcheckfailed: true
+        env:
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
 
       - name: Slack failure notifications
         uses: 8398a7/action-slack@v3
@@ -89,4 +88,5 @@ jobs:
 
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: success()
+          SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+        if: success() && github.event_name == 'push' && env.SKIP_VER
