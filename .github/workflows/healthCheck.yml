@@ -1,9 +1,9 @@
-name: Regular healthy check
+name: Regular_healthy_check
 
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: [""]
+    workflows: ["Test_&_Deployment pipeline"]
     branches: [master]
     types:
       - completed
