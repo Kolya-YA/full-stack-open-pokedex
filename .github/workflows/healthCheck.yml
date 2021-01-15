@@ -8,7 +8,7 @@ on:
     types:
       - completed
   schedule:
-    -cron: '47 5 * * *'
+    - cron: '47 5 * * *'
 
 jobs:
   healthy_check:
