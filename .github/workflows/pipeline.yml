@@ -8,10 +8,10 @@ on:
     branches: [master]
     types: [opened, synchronize]
 
+env:
+  NOT_SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
+
 jobs:
-  env:
-    NOT_SKIP_VER: ${{ !contains(join(github.event.commits.*.message, ', '), '#skip_ver') }}
-    
   lint_test_deployment:
     name: Lint, test and deployment pipeline
     runs-on: ubuntu-latest
